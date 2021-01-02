@@ -35,9 +35,7 @@ public class NerdLauncherFragment extends Fragment{
         startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager=getActivity().getPackageManager();
         activities=packageManager.queryIntentActivities(startIntent,0);
-        Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> {
-                    return String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString());
-                }
+        Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString())
         );
         System.out.println("found "+activities.size());
 //        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
@@ -65,7 +63,7 @@ public class NerdLauncherFragment extends Fragment{
 
         public NerdLauncherHolder(@NonNull View itemView) {
             super(itemView);
-            mTextView=(TextView) itemView.findViewById(R.id.list_item);
+            mTextView= itemView.findViewById(R.id.list_item);
         }
 
         public  void setTextView(CharSequence charInput){
