@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class NerdLauncherFragment extends Fragment{
+    List<ResolveInfo> activities;
 
     public static Fragment newInstance() {
         return new NerdLauncherFragment();
@@ -30,8 +31,18 @@ public class NerdLauncherFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ActivityNerdLauncherBinding binding= DataBindingUtil.inflate(inflater,R.layout.activity_nerd_launcher,container,false);
         binding.nerdLauncherRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Intent startIntent=new Intent(Intent.ACTION_MAIN);
+        startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        PackageManager packageManager=getActivity().getPackageManager();
+        activities=packageManager.queryIntentActivities(startIntent,0);
+        Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString());
+                }
+        );
+        System.out.println("found "+activities.size());
 //        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
-        setupAdapter();
+//        setupAdapter();
+        binding.nerdLauncherRecyclerView.setAdapter(new NerdLauncherAdapter(activities,packageManager));
         return binding.getRoot();
     }
 
@@ -39,7 +50,7 @@ public class NerdLauncherFragment extends Fragment{
         Intent startIntent=new Intent(Intent.ACTION_MAIN);
         startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager=getActivity().getPackageManager();
-        List<ResolveInfo> activities=packageManager.queryIntentActivities(startIntent,0);
+        activities=packageManager.queryIntentActivities(startIntent,0);
         Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> {
 //                PackageManager pm=getActivity().getPackageManager();
                 return String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString());
@@ -54,31 +65,40 @@ public class NerdLauncherFragment extends Fragment{
 
         public NerdLauncherHolder(@NonNull View itemView) {
             super(itemView);
-            mTextView=itemView.findViewById(R.id.list_item);
+            mTextView=(TextView) itemView.findViewById(R.id.list_item);
         }
 
-        void setTextView(String stringInput){
-            mTextView.setText(stringInput);
+        public  void setTextView(CharSequence charInput){
+            mTextView.setText(charInput);
         }
     }
 
-    class NerdLauncherAdapter extends RecyclerView.Adapter{
+    class NerdLauncherAdapter extends RecyclerView.Adapter<NerdLauncherHolder>{
+
+        List<ResolveInfo> mResolveInfoList;
+        PackageManager mPackageManager;
+
+        public NerdLauncherAdapter(List<ResolveInfo> resolveInfoList,PackageManager packageManager) {
+            mResolveInfoList = resolveInfoList;
+            mPackageManager=packageManager;
+        }
 
         @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return null;
+        public NerdLauncherHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new NerdLauncherHolder(LayoutInflater.from(getContext()).inflate(R.layout.list_item,parent,false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+        public void onBindViewHolder(@NonNull NerdLauncherHolder holder, int position) {
+            holder.setTextView(mResolveInfoList.get(position).loadLabel(mPackageManager));
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return mResolveInfoList.size();
         }
     }
+
 
 }
