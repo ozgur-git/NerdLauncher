@@ -14,8 +14,6 @@ import com.example.nerdlauncher.databinding.ActivityNerdLauncherBinding;
 
 public class NerdLauncherFragment extends Fragment{
 
-    RecyclerView mRecyclerView;
-
     public static Fragment newInstance() {
 
         return new NerdLauncherFragment();
