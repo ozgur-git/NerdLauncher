@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.nerdlauncher.databinding.ActivityNerdLauncherBinding;
+import com.example.nerdlauncher.databinding.ListItemBinding;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,15 +60,17 @@ public class NerdLauncherFragment extends Fragment{
 
     class NerdLauncherHolder extends RecyclerView.ViewHolder{
 
-        TextView mTextView;
+        ListItemBinding binding;
 
-        public NerdLauncherHolder(@NonNull View itemView) {
-            super(itemView);
-            mTextView= itemView.findViewById(R.id.list_item);
+        public NerdLauncherHolder(ListItemBinding binding) {
+            super(binding.getRoot());
+            this.binding=binding;
+            binding.setViewModel(new NerdLauncherViewModel());;
+
         }
 
         public  void setTextView(CharSequence charInput){
-            mTextView.setText(charInput);
+//            binding.getViewModel()
         }
     }
 
@@ -84,7 +87,8 @@ public class NerdLauncherFragment extends Fragment{
         @NonNull
         @Override
         public NerdLauncherHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new NerdLauncherHolder(LayoutInflater.from(getContext()).inflate(R.layout.list_item,parent,false));
+            ListItemBinding binding=DataBindingUtil.inflate(LayoutInflater.from(getContext()),R.layout.list_item,parent,false);
+            return new NerdLauncherHolder(binding);
         }
 
         @Override
