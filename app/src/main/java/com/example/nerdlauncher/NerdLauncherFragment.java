@@ -17,10 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.nerdlauncher.databinding.ActivityNerdLauncherBinding;
 import com.example.nerdlauncher.databinding.ListItemBinding;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
 public class NerdLauncherFragment extends Fragment{
+
+    @Inject
+    NerdLauncherViewModel mNerdLauncherViewModel;
+
     List<ResolveInfo> activities;
 
     public static Fragment newInstance() {
@@ -30,6 +35,10 @@ public class NerdLauncherFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        ApplicationComponent applicationComponent=DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
+        applicationComponent.inject(this);
+
         ActivityNerdLauncherBinding binding= DataBindingUtil.inflate(inflater,R.layout.activity_nerd_launcher,container,false);
         binding.nerdLauncherRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         Intent startIntent=new Intent(Intent.ACTION_MAIN);
@@ -51,7 +60,6 @@ public class NerdLauncherFragment extends Fragment{
         PackageManager packageManager=getActivity().getPackageManager();
         activities=packageManager.queryIntentActivities(startIntent,0);
         Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> {
-//                PackageManager pm=getActivity().getPackageManager();
                 return String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString());
             }
         );
@@ -65,12 +73,15 @@ public class NerdLauncherFragment extends Fragment{
         public NerdLauncherHolder(ListItemBinding binding) {
             super(binding.getRoot());
             this.binding=binding;
-            binding.setViewModel(new NerdLauncherViewModel());;
+            binding.setViewModel(mNerdLauncherViewModel);;
+//            binding.setViewModel(new NerdLauncherViewModel());;
 
         }
 
         public  void setTextView(String stringInput){
             binding.getViewModel().setActivityName(stringInput);
+            binding.executePendingBindings();
+
         }
     }
 
