@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -36,8 +35,6 @@ public class NerdLauncherFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ApplicationComponent applicationComponent=DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
-        applicationComponent.inject(this);
 
         ActivityNerdLauncherBinding binding= DataBindingUtil.inflate(inflater,R.layout.activity_nerd_launcher,container,false);
         binding.nerdLauncherRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -50,7 +47,12 @@ public class NerdLauncherFragment extends Fragment{
         System.out.println("found "+activities.size());
 //        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
 //        setupAdapter();
+
+        ApplicationComponent applicationComponent=DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(packageManager)).build();
+        applicationComponent.inject(this);
+
         binding.nerdLauncherRecyclerView.setAdapter(new NerdLauncherAdapter(activities,packageManager));
+
         return binding.getRoot();
     }
 
@@ -78,8 +80,10 @@ public class NerdLauncherFragment extends Fragment{
 
         }
 
-        public  void setTextView(String stringInput){
-            binding.getViewModel().setActivityName(stringInput);
+        public  void setTextView(ResolveInfo resolveInfo,PackageManager packageManager){
+
+            binding.getViewModel().setResolveInfo(resolveInfo);
+
             binding.executePendingBindings();
 
         }
@@ -104,7 +108,7 @@ public class NerdLauncherFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(@NonNull NerdLauncherHolder holder, int position) {
-            holder.setTextView(mResolveInfoList.get(position).loadLabel(mPackageManager).toString());
+            holder.setTextView(mResolveInfoList.get(position),mPackageManager);
         }
 
         @Override
