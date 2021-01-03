@@ -69,8 +69,8 @@ public class NerdLauncherFragment extends Fragment{
 
         }
 
-        public  void setTextView(CharSequence charInput){
-//            binding.getViewModel()
+        public  void setTextView(String stringInput){
+            binding.getViewModel().setActivityName(stringInput);
         }
     }
 
@@ -93,7 +93,7 @@ public class NerdLauncherFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(@NonNull NerdLauncherHolder holder, int position) {
-            holder.setTextView(mResolveInfoList.get(position).loadLabel(mPackageManager));
+            holder.setTextView(mResolveInfoList.get(position).loadLabel(mPackageManager).toString());
         }
 
         @Override
