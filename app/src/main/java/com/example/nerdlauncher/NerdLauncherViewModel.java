@@ -31,7 +31,6 @@ public class NerdLauncherViewModel {
 
         System.out.println(getActivityName().toString());
 
-
 //        Intent intent=new Intent(this,
     }
 }

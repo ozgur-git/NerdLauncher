@@ -81,11 +81,8 @@ public class NerdLauncherFragment extends Fragment{
         }
 
         public  void setTextView(ResolveInfo resolveInfo,PackageManager packageManager){
-
             binding.getViewModel().setResolveInfo(resolveInfo);
-
             binding.executePendingBindings();
-
         }
     }
 
