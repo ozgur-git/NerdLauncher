@@ -26,6 +26,9 @@ public class NerdLauncherFragment extends Fragment{
     NerdLauncherViewModel mNerdLauncherViewModel;
 
     List<ResolveInfo> activities;
+    PackageManager packageManager;
+    ApplicationComponent applicationComponent;
+
 
     public static Fragment newInstance() {
         return new NerdLauncherFragment();
@@ -40,7 +43,7 @@ public class NerdLauncherFragment extends Fragment{
         binding.nerdLauncherRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         Intent startIntent=new Intent(Intent.ACTION_MAIN);
         startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        PackageManager packageManager=getActivity().getPackageManager();
+        packageManager=getActivity().getPackageManager();
         activities=packageManager.queryIntentActivities(startIntent,0);
         Collections.sort(activities, (ResolveInfo o1,ResolveInfo o2)-> String.CASE_INSENSITIVE_ORDER.compare(o1.loadLabel(packageManager).toString(),o2.loadLabel(packageManager).toString())
         );
@@ -48,7 +51,7 @@ public class NerdLauncherFragment extends Fragment{
 //        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
 //        setupAdapter();
 
-        ApplicationComponent applicationComponent=DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(packageManager)).build();
+        applicationComponent=DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(packageManager,getActivity())).build();
         applicationComponent.inject(this);
 
         binding.nerdLauncherRecyclerView.setAdapter(new NerdLauncherAdapter(activities,packageManager));
@@ -72,18 +75,24 @@ public class NerdLauncherFragment extends Fragment{
 
         ListItemBinding binding;
 
+        @Inject
+        NerdLauncherViewModel nerdLauncherViewModel;
+
         public NerdLauncherHolder(ListItemBinding binding) {
             super(binding.getRoot());
             this.binding=binding;
-            binding.setViewModel(mNerdLauncherViewModel);;
-//            binding.setViewModel(new NerdLauncherViewModel());;
-
+            applicationComponent.inject(this);
+            binding.setViewModel(nerdLauncherViewModel);;
+//            binding.setViewModel(new NerdLauncherViewModel(packageManager));;
         }
 
-        public  void setTextView(ResolveInfo resolveInfo,PackageManager packageManager){
+        public void setItemView(ResolveInfo resolveInfo){
             binding.getViewModel().setResolveInfo(resolveInfo);
+            binding.getViewModel().setDrawable(binding.imageView);
             binding.executePendingBindings();
         }
+
+
     }
 
     class NerdLauncherAdapter extends RecyclerView.Adapter<NerdLauncherHolder>{
@@ -105,7 +114,7 @@ public class NerdLauncherFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(@NonNull NerdLauncherHolder holder, int position) {
-            holder.setTextView(mResolveInfoList.get(position),mPackageManager);
+            holder.setItemView(mResolveInfoList.get(position));
         }
 
         @Override

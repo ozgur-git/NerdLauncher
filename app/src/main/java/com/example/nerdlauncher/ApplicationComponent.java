@@ -6,4 +6,6 @@ import dagger.Component;
 public interface ApplicationComponent {
 
     void inject (NerdLauncherFragment nerdLauncherFragment);
+    void inject (NerdLauncherFragment.NerdLauncherHolder nerdLauncherHolder);
+
 }
