@@ -38,7 +38,6 @@ public class NerdLauncherFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-
         ActivityNerdLauncherBinding binding= DataBindingUtil.inflate(inflater,R.layout.activity_nerd_launcher,container,false);
         binding.nerdLauncherRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         Intent startIntent=new Intent(Intent.ACTION_MAIN);
