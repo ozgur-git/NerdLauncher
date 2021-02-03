@@ -6,7 +6,7 @@ The project's main targets are
 - use explicit intents to start the selected app in its own task.
 
 I added the followings to the standard code described in the book
-- add icon of each app to each list
+- add icons of each app to each list item.
 
 # Technology
 - Java
